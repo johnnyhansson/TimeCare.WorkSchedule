@@ -1,4 +1,5 @@
 ﻿using Shouldly;
+using System;
 using System.IO;
 using System.Linq;
 using TimeCare.WorkSchedule.UnitTests.Helpers;
@@ -37,6 +38,28 @@ namespace TimeCare.WorkSchedule.Html.UnitTests
             document.WorkShifts.First().Tasks.ShouldBeEmpty();
             document.WorkShifts.First().TimeBankChanges.ShouldBe("8:30");
             document.WorkShifts.First().BonusTime.ShouldBe("0:00");
+        }
+
+        [Fact]
+        public void ThrowsExceptionIfStreamIsEmpty()
+        {
+            Stream workScheduleSource = new MemoryStream();
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => new HtmlDocument(workScheduleSource));
+        }
+
+        [Fact]
+        public void ThrowsExceptionIfStreamIsAtEndPosition()
+        {
+            Stream workScheduleSource = StreamHelpers.CreateStreamAtEndPosition();
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => new HtmlDocument(workScheduleSource));
+        }
+
+        [Fact]
+        public void ThrowsExceptionIfWorkScheduleSourceIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => new HtmlDocument(null));
         }
     }
 }

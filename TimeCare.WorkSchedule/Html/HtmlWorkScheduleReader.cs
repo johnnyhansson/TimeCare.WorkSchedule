@@ -1,53 +1,38 @@
 ﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using HtmlAgilityPack;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace TimeCare.WorkSchedule.Html
 {
     public class HtmlWorkScheduleReader : IWorkScheduleReader
     {
-        private readonly Stream workScheduleSource;
+        private readonly IHtmlDocument document;
 
-        public HtmlWorkScheduleReader(Stream workScheduleSource)
+        public HtmlWorkScheduleReader(IHtmlDocument document)
         {
-            if (workScheduleSource == null)
-                throw new ArgumentNullException(nameof(workScheduleSource));
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
 
-            this.workScheduleSource = workScheduleSource;
+            this.document = document;
         }
 
-        public async Task<WorkSchedule> ReadAsync()
+        public WorkSchedule Read()
         {
-            bool streamEmptyOrAtEnd = workScheduleSource.Length == 0 || workScheduleSource.Position == workScheduleSource.Length;
-
-            if (streamEmptyOrAtEnd)
-                return null;
-
             WorkSchedule workSchedule = new WorkSchedule();
-            HtmlAgilityPack.HtmlDocument workScheduleDocument = new HtmlAgilityPack.HtmlDocument();
-            workScheduleDocument.Load(workScheduleSource);
-
-            workSchedule.Employee = workScheduleDocument.DocumentNode.SelectSingleNode("//table[contains(@class, 'Table_Person')]").SelectSingleNode(".//tr[not(@class)]/td").InnerText;
-            HtmlNodeCollection workShiftRows = workScheduleDocument.DocumentNode.SelectSingleNode("//table[contains(@class, 'Table_Sched')]").SelectNodes(".//tr[not(@class)]");
-
+            workSchedule.Employee = document.EmployeeName;
+            
             List<WorkShift> workShifts = new List<WorkShift>();
 
-            foreach (var workShiftRow in workShiftRows)
+            foreach (var workShiftRow in document.WorkShifts)
             {
-                var workShiftColumns = workShiftRow.Elements("td").ToArray();
-
                 WorkShift workShift = new WorkShift
                 {
-                    Start = !string.IsNullOrWhiteSpace(workShiftColumns[3].InnerText) ? DateTime.Parse($"{workShiftColumns[1].InnerText} {workShiftColumns[3].InnerText.Substring(0, 2)}:{workShiftColumns[3].InnerText.Substring(2, 2)}") : DateTime.MinValue,
-                    End = !string.IsNullOrWhiteSpace(workShiftColumns[4].InnerText) ? DateTime.Parse($"{workShiftColumns[1].InnerText} {workShiftColumns[4].InnerText.Substring(0, 2)}:{workShiftColumns[4].InnerText.Substring(2, 2)}") : DateTime.MinValue,
-                    Weekday = workShiftColumns[2].InnerText,
-                    WorkCode = workShiftColumns[5].InnerText,
-                    Pause = !string.IsNullOrWhiteSpace(workShiftColumns[6].InnerText) ? TimeSpan.Parse($"00:{workShiftColumns[6].InnerText}:00") : TimeSpan.FromMinutes(0),
-                    Tasks = workShiftColumns[8].InnerText,
-                    Notes = workShiftColumns[9].InnerText
+                    Start = !string.IsNullOrWhiteSpace(workShiftRow.StartTime) ? DateTime.Parse($"{workShiftRow.Date} {workShiftRow.StartTime.Substring(0, 2)}:{workShiftRow.StartTime.Substring(2, 2)}") : DateTime.MinValue,
+                    End = !string.IsNullOrWhiteSpace(workShiftRow.EndTime) ? DateTime.Parse($"{workShiftRow.Date} {workShiftRow.EndTime.Substring(0, 2)}:{workShiftRow.EndTime.Substring(2, 2)}") : DateTime.MinValue,
+                    Weekday = workShiftRow.Weekday,
+                    WorkCode = workShiftRow.WorkCode,
+                    Pause = !string.IsNullOrWhiteSpace(workShiftRow.PauseDuration) ? TimeSpan.Parse($"00:{workShiftRow.PauseDuration}:00") : TimeSpan.FromMinutes(0),
+                    Tasks = workShiftRow.Tasks,
+                    Notes = workShiftRow.Notes
                 };
 
                 if (workShift.Duration.Ticks > 0)

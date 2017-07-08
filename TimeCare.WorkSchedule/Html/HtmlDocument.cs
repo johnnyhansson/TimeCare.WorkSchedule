@@ -12,6 +12,14 @@ namespace TimeCare.WorkSchedule.Html
 
         public HtmlDocument(Stream stream)
         {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+
+            bool streamEmptyOrAtEnd = stream.Length == 0 || stream.Position == stream.Length;
+
+            if (streamEmptyOrAtEnd)
+                throw new ArgumentOutOfRangeException(nameof(stream));
+
             workSchedule = new HtmlAgilityPack.HtmlDocument();
             workSchedule.Load(stream);
         }
