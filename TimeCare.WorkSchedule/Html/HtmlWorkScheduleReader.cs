@@ -24,24 +24,27 @@ namespace TimeCare.WorkSchedule.Html
 
             foreach (var workShiftRow in document.WorkShifts)
             {
-                WorkShift workShift = new WorkShift
-                {
-                    Start = !string.IsNullOrWhiteSpace(workShiftRow.StartTime) ? DateTime.Parse($"{workShiftRow.Date} {workShiftRow.StartTime.Substring(0, 2)}:{workShiftRow.StartTime.Substring(2, 2)}") : DateTime.MinValue,
-                    End = !string.IsNullOrWhiteSpace(workShiftRow.EndTime) ? DateTime.Parse($"{workShiftRow.Date} {workShiftRow.EndTime.Substring(0, 2)}:{workShiftRow.EndTime.Substring(2, 2)}") : DateTime.MinValue,
-                    Weekday = workShiftRow.Weekday,
-                    WorkCode = workShiftRow.WorkCode,
-                    Pause = !string.IsNullOrWhiteSpace(workShiftRow.PauseDuration) ? TimeSpan.Parse($"00:{workShiftRow.PauseDuration}:00") : TimeSpan.FromMinutes(0),
-                    Tasks = workShiftRow.Tasks,
-                    Notes = workShiftRow.Notes
-                };
-
-                if (workShift.Duration.Ticks > 0)
-                    workShifts.Add(workShift);
+                if (workShiftRow.IsScheduled)
+                    workShifts.Add(CreateWorkShift(workShiftRow));
             }
 
             workSchedule.WorkShifts = workShifts;
 
             return workSchedule;
+        }
+
+        private static WorkShift CreateWorkShift(WorkShiftRow workShiftRow)
+        {
+            return new WorkShift
+            {
+                Start = !string.IsNullOrWhiteSpace(workShiftRow.StartTime) ? DateTime.Parse($"{workShiftRow.Date} {workShiftRow.StartTime.Substring(0, 2)}:{workShiftRow.StartTime.Substring(2, 2)}") : DateTime.MinValue,
+                End = !string.IsNullOrWhiteSpace(workShiftRow.EndTime) ? DateTime.Parse($"{workShiftRow.Date} {workShiftRow.EndTime.Substring(0, 2)}:{workShiftRow.EndTime.Substring(2, 2)}") : DateTime.MinValue,
+                Weekday = workShiftRow.Weekday,
+                WorkCode = workShiftRow.WorkCode,
+                Pause = !string.IsNullOrWhiteSpace(workShiftRow.PauseDuration) ? TimeSpan.Parse($"00:{workShiftRow.PauseDuration}:00") : TimeSpan.FromMinutes(0),
+                Tasks = workShiftRow.Tasks,
+                Notes = workShiftRow.Notes
+            };
         }
     }
 }

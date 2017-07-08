@@ -25,5 +25,7 @@
         public string TimeBankChanges { get; set; }
 
         public string BonusTime { get; set; }
+
+        public bool IsScheduled => !string.IsNullOrWhiteSpace(StartTime) && !string.IsNullOrWhiteSpace(EndTime);
     }
 }
