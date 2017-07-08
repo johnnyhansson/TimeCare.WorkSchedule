@@ -5,7 +5,7 @@ using HtmlAgilityPack;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TimeCare.WorkSchedule
+namespace TimeCare.WorkSchedule.Html
 {
     public class HtmlWorkScheduleReader : IWorkScheduleReader
     {
@@ -27,7 +27,7 @@ namespace TimeCare.WorkSchedule
                 return null;
 
             WorkSchedule workSchedule = new WorkSchedule();
-            HtmlDocument workScheduleDocument = new HtmlDocument();
+            HtmlAgilityPack.HtmlDocument workScheduleDocument = new HtmlAgilityPack.HtmlDocument();
             workScheduleDocument.Load(workScheduleSource);
 
             workSchedule.Employee = workScheduleDocument.DocumentNode.SelectSingleNode("//table[contains(@class, 'Table_Person')]").SelectSingleNode(".//tr[not(@class)]/td").InnerText;

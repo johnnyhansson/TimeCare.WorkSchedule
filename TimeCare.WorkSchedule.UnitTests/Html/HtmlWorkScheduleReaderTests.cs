@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Shouldly;
 using Xunit;
@@ -7,7 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using TimeCare.WorkSchedule.UnitTests.Helpers;
 
-namespace TimeCare.WorkSchedule.UnitTests
+namespace TimeCare.WorkSchedule.Html.UnitTests
 {
     public class HtmlWorkScheduleReaderTests
     {
@@ -42,7 +41,8 @@ namespace TimeCare.WorkSchedule.UnitTests
         [Fact]
         public async Task ReturnsWorkScheduleBasedOnContentFromWorkScheduleSource()
         {
-            Stream workScheduleSource = new FileStream(@"Resources\Workschedule.html", FileMode.Open);
+            Stream workScheduleSource = StreamHelpers.CreateFromFile(@"Resources\Workschedule.html");
+
             IWorkScheduleReader reader = new HtmlWorkScheduleReader(workScheduleSource);
 
             WorkSchedule actual = await reader.ReadAsync();

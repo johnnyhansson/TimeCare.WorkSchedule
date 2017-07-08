@@ -11,5 +11,11 @@ namespace TimeCare.WorkSchedule.UnitTests.Helpers
 
             return stream;
         }
+
+        public static Stream CreateFromFile(string path)
+        {
+            byte[] content = File.ReadAllBytes(@"Resources\Workschedule.html");
+            return new MemoryStream(content);
+        }
     }
 }
