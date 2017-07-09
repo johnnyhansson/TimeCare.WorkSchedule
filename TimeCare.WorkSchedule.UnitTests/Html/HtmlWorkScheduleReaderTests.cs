@@ -3,6 +3,7 @@ using Shouldly;
 using Xunit;
 using System.IO;
 using TimeCare.WorkSchedule.UnitTests.Helpers;
+using System;
 
 namespace TimeCare.WorkSchedule.Html.UnitTests
 {
@@ -21,6 +22,36 @@ namespace TimeCare.WorkSchedule.Html.UnitTests
             actual.ShouldNotBeNull();
             actual.Employee.ShouldBe("John Doe");
             actual.WorkShifts.Count().ShouldBe(72);
+        }
+
+        [Fact]
+        public void ThrowsExceptionIfHtmlDocumentIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => new HtmlWorkScheduleReader(null));
+        }
+
+        [Fact]
+        public void ReturnsAnEmptyWorkScheduleIfHtmlDocumentIsEmpty()
+        {
+            IWorkScheduleReader reader = new HtmlWorkScheduleReader(DocumentHelpers.EmptyDocument());
+
+            WorkSchedule workSchedule = reader.Read();
+
+            workSchedule.ShouldNotBeNull();
+            workSchedule.Employee.ShouldBeEmpty();
+            workSchedule.WorkShifts.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public void OnlyIncludeScheduledDays()
+        {
+            IWorkScheduleReader reader = new HtmlWorkScheduleReader(DocumentHelpers.DocumentWithDays());
+
+            WorkSchedule workSchedule = reader.Read();
+
+            workSchedule.ShouldNotBeNull();
+            workSchedule.Employee.ShouldBe("John Doe");
+            workSchedule.WorkShifts.Count().ShouldBe(3);
         }
     }
 }
