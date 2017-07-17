@@ -6,6 +6,7 @@ pipeline {
         PACKAGE_VERSION = "1.0.0.${env.BUILD_NUMBER}"
         PACKAGE_ID = "TimeCare.WorkSchedule"
         PACKAGE_PATH = "bin\\release\\${env.PACKAGE_ID}.${env.PACKAGE_VERSION}.nupkg"
+        PUBLISH_PACKAGE = "false"
         CONFIGURATION = "Release"
     }
     
@@ -39,16 +40,24 @@ pipeline {
             }
         }
         
-        stage("Merge tests") {
+        stage("Publish to NuGet package") {
+            when {
+                environment name: "PUBLISH_PACKAGE", value: "true"
+            }
             steps {
-                step([$class: "XUnitBuilder", thresholds: [[$class: "FailedThreshold", failureThreshold: "0"]], 
-                            tools: [[$class: "CustomType", deleteOutputFiles: false, pattern: "**/*.xml", customXSL: "tools/xunitdotnet-2.0-to-junit-2.xsl"]]])
+                dir('TimeCare.WorkSchedule') {
+                    bat "dotnet pack --no-build -c %CONFIGURATION% . /property:PackageVersion=%PACKAGE_VERSION%"
+                    bat "dotnet nuget push %PACKAGE_PATH% --source https://www.nuget.org/api/v2/package --api-key %NUGET_API_KEY%"
+                }
             }
         }
     }
     
     post {
         always {
+            step([$class: "XUnitBuilder", thresholds: [[$class: "FailedThreshold", failureThreshold: "0"]], 
+                tools: [[$class: "CustomType", deleteOutputFiles: false, pattern: "**/*.xml", customXSL: "tools/xunitdotnet-2.0-to-junit-2.xsl"]]])
+
             cleanWs()
         }
     }
