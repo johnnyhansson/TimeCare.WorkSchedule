@@ -26,9 +26,15 @@ pipeline {
         stage("Test") {
             steps {
                 parallel("Unit Tests": {
-                    runTests("TimeCare.WorkSchedule.UnitTests", "unittests.xml")
+                    dir("TimeCare.WorkSchedule.UnitTests") {
+                        echo "Run unit tests"
+                        bat "dotnet xunit -configuration %CONFIGURATION% -nobuild -xml unittests.xml"
+                    }
                 }, "Integration tests": {
-                    runTests("TimeCare.WorkSchedule.IntegrationTests", "integrationtests.xml")
+                    dir("TimeCare.WorkSchedule.IntegrationTests") {
+                        echo "Run integration tests"
+                        bat "dotnet xunit -configuration %CONFIGURATION% -nobuild -xml integrationtests.xml"
+                    }
                 })
             }
         }
@@ -45,11 +51,5 @@ pipeline {
         always {
             cleanWs()
         }
-    }
-}
-
-def runTests(string path, string testResultFile) {
-    dir(path) {
-        bat "dotnet xunit -configuration %CONFIGURATION% -nobuild -xml ${testResultFile}"
     }
 }
