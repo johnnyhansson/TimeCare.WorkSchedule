@@ -6,8 +6,6 @@ pipeline {
         PACKAGE_VERSION = "1.0.0.${env.BUILD_NUMBER}"
         PACKAGE_ID = "TimeCare.WorkSchedule"
         PACKAGE_PATH = "bin\\release\\${env.PACKAGE_ID}.${env.PACKAGE_VERSION}.nupkg"
-        PUBLISH_PACKAGE = "true"
-        CONFIGURATION = "Release"
     }
     
     stages {
