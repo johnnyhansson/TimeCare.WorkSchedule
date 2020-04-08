@@ -9,7 +9,13 @@ variables:
 
 steps:
 - task: DotNetCoreCLI@2
+  displayName: Build
   inputs:
     command: 'build'
     projects: '*.sln'
     arguments: '-c $(configuration)'
+- task: DotNetCoreCLI@2
+  displayName: Test
+  inputs:
+    command: 'test'
+    projects: '**/*Tests.csproj'
