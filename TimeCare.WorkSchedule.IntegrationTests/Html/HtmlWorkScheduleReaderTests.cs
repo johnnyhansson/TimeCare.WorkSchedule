@@ -11,7 +11,7 @@ namespace TimeCare.WorkSchedule.Html.IntegrationTests
         [Fact]
         public void ReturnsWorkScheduleBasedOnContentFromWorkScheduleSource()
         {
-            Stream workScheduleSource = StreamHelpers.CreateFromFile(@"Resources\Workschedule.html");
+            Stream workScheduleSource = StreamHelpers.CreateFromFile(Path.Combine("Resources", "Workschedule.html"));
             IHtmlDocument document = new HtmlDocument(workScheduleSource);
 
             IWorkScheduleReader reader = new HtmlWorkScheduleReader(document);

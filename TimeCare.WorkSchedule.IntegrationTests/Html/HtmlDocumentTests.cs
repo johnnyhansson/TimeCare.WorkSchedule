@@ -8,21 +8,23 @@ namespace TimeCare.WorkSchedule.Html.IntegrationTests
 {
     public class HtmlDocumentTests
     {
+        private readonly IHtmlDocument document;
+
+        public HtmlDocumentTests()
+        {
+            Stream workSchedule = StreamHelpers.CreateFromFile(Path.Combine("Resources", "Workschedule.html"));
+            document = new HtmlDocument(workSchedule);
+        }
+
         [Fact]
         public void ReadsEmployeeNameFromDocument()
         {
-            Stream workSchedule = StreamHelpers.CreateFromFile(@"Resources\Workschedule.html");
-            IHtmlDocument document = new HtmlDocument(workSchedule);
-
             document.EmployeeName.ShouldBe("John Doe");
         }
 
         [Fact]
         public void ReadsWorkShiftFromDocument()
         {
-            Stream workSchedule = StreamHelpers.CreateFromFile(@"Resources\Workschedule.html");
-            IHtmlDocument document = new HtmlDocument(workSchedule);
-
             document.WorkShifts.ShouldNotBeEmpty();
             document.WorkShifts.Count().ShouldBe(99);
             document.WorkShifts.First().Week.ShouldBe("22");

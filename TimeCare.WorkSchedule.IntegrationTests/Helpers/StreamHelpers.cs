@@ -6,7 +6,7 @@ namespace TimeCare.WorkSchedule.IntegrationTests.Helpers
     {
         public static Stream CreateFromFile(string path)
         {
-            byte[] content = File.ReadAllBytes(@"Resources\Workschedule.html");
+            byte[] content = File.ReadAllBytes(path);
             return new MemoryStream(content);
         }
     }
