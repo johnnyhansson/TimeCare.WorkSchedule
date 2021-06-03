@@ -19,6 +19,7 @@ steps:
     arguments: '-c $(BuildConfiguration)'
 
 - task: DotNetCoreCLI@2
+  displayName: Generate NuGet package
   inputs:
     command: 'pack'
     packagesToPack: '**/TimeCare.WorkSchedule.csproj'
@@ -32,11 +33,13 @@ steps:
     arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
 
 - task: PublishCodeCoverageResults@1
+  displayName: Publish code coverage results
   inputs:
     codeCoverageTool: 'Cobertura'
     summaryFileLocation: '**/coverage.cobertura.xml'
 
 - task: DotNetCoreCLI@2
+  displayName: Push NuGet package
   inputs:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
