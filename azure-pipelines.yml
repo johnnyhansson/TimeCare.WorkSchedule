@@ -5,15 +5,25 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  configuration: Release
+  BuildConfiguration: Release
 
 steps:
+
+- task: NuGetAuthenticate@0
+
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
     command: 'build'
     projects: '*.sln'
-    arguments: '-c $(configuration)'
+    arguments: '-c $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/TimeCare.WorkSchedule.csproj'
+    versioningScheme: 'off'
+
 - task: DotNetCoreCLI@2
   displayName: Test
   inputs:
@@ -25,3 +35,10 @@ steps:
   inputs:
     codeCoverageTool: 'Cobertura'
     summaryFileLocation: '**/coverage.cobertura.xml'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'eb86a2df-65c2-49a5-9a57-4172b043db1c'
