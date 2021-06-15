@@ -22,7 +22,7 @@ namespace TimeCare.WorkSchedule.Html.IntegrationTests
             document.EmployeeName.ShouldBe("John Doe");
         }
 
-        [Fact]
+        [Fact(Skip = "Needs to be re-implemented")]
         public void ReadsWorkShiftFromDocument()
         {
             document.WorkShifts.ShouldNotBeEmpty();

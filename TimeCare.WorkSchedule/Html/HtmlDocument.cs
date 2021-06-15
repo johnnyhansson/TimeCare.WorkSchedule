@@ -47,10 +47,9 @@ namespace TimeCare.WorkSchedule.Html
                         WorkCode = workShiftColumns[5].InnerText,
                         PauseDuration = workShiftColumns[6].InnerText,
                         Duration = workShiftColumns[7].InnerText,
-                        Tasks = workShiftColumns[8].InnerText,
-                        Notes = workShiftColumns[9].InnerText,
-                        TimeBankChanges = workShiftColumns[11].InnerText,
-                        BonusTime = workShiftColumns[12].InnerText
+                        Notes = workShiftColumns[8].InnerText,
+                        TimeBankChanges = workShiftColumns[10].InnerText,
+                        BonusTime = workShiftColumns[11].InnerText
                     };
 
                     workShifts.Add(workShift);
